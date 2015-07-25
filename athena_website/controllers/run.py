@@ -3,7 +3,6 @@
 from athena_website import app
 from flask import render_template, request
 
-from . import request
 from . import athenahealthapi
 
 # OAuth information
@@ -28,6 +27,13 @@ def get_data():
 def post_data():
     print("GOT DATA")
     print(request.json)
+    if "json" in request:
+        print(request.json)
+    return "Ok", 200
+
+@app.route("/d3", methods=["GET"])
+def get_d3():
+    return render_template('d3.html', data=[1,2,3,4,5,6,7])
 
 # Testing AthenaHealth
 @app.route('/login', methods=["GET","POST"])
