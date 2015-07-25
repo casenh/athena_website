@@ -19,3 +19,27 @@ def get_data():
 def post_data():
     print("GOT DATA")
     print(request.json)
+
+    # Rending the data page
+@app.route("/multi-line", methods=["GET"])
+def get_data2():
+    print("Routing data")
+    return render_template('multi-line.html')
+
+# Collect post information
+@app.route("/multi-line", methods=["POST"])
+def post_data2():
+    print("GOT DATA")
+    print(request.json)
+
+        # Rending the data page
+@app.route("/multi-line-full", methods=["GET"])
+def get_data3():
+    print("Routing data")
+    return render_template('multi-line-full.html')
+
+# Collect post information
+@app.route("/multi-line-full", methods=["POST"])
+def post_data3():
+    print("GOT DATA")
+    print(request.json)
