@@ -44,7 +44,13 @@ def post_data():
     user.xVal = xVal
     user.yVal = yVal
     user.xVal = zVal
-    return "Ok", 200
+    return "OK", 200
+        
+# Rending the data page
+@app.route("/multi-line-full", methods=["GET"])
+def get_data3():
+    print("Routing data")
+    return render_template('multi-line-full.html')
 
 @app.route("/d3", methods=["GET"])
 def get_d3():
