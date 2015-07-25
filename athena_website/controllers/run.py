@@ -25,10 +25,25 @@ def get_data():
 # Collect post information
 @app.route("/data", methods=["POST"])
 def post_data():
-    print("GOT DATA")
-    print(request.json)
-    if "json" in request:
-        print(request.json)
+    # Read in the collected user info
+    xVal = []
+    yVal = []
+    zVal = []
+    username = None
+    for data in request.json:
+        if username is None:
+            username = data["email"]
+        xVal.append(data["xVal"])
+        yVal.append(data["yVal"])
+        zVal.append(data["zVal"])
+
+    # Grab the user and update the values
+    user = mod_users.get(username, noerror=True)
+    if user is None:
+        user = mod_users.create(username)
+    user.xVal = xVal
+    user.yVal = yVal
+    user.xVal = zVal
     return "Ok", 200
 
 @app.route("/d3", methods=["GET"])
