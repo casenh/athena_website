@@ -20,7 +20,8 @@ api = athenahealthapi.APIConnection(version, key, secret, practiceid)
 # Rendering the home page
 @app.route("/", methods=["GET"])
 def index():
-    return render_template('index.html')
+    print('getting index')
+    return render_template('bootstrap/index.html')
 
 # Save the CSV data
 def save_csv(timestamps):

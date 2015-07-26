@@ -20,4 +20,4 @@ app.config.from_object("athena_website.config")
 from . import controllers
 
 # Start the app
-app.run(host="ljtrust.org", port=3000)
+app.run(host="localhost", port=3000)
