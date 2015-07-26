@@ -4,10 +4,11 @@ import os
 import csv
 
 from athena_website import app
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, flash
 
 from . import athenahealthapi
 from athena_website import _base
+from . import FFT as fft
 
 # OAuth information
 key = r'6uqkebvamka8r5ra7u7w7hv4'
@@ -34,18 +35,28 @@ def save_csv(timestamps):
 @app.route("/data", methods=["GET"])
 def get_data():
     data = []
+    x = []
+    y = []
+    z = []
     csv_path = os.path.join(_base, "static") + "/timestamps.csv" 
     with open(csv_path) as csv_file:
         csv_dict = csv.DictReader(csv_file)
         for row in csv_dict:
             data.append({"x": row["x"], "y": row["y"], "z": row["z"]})
-    print("Appended")
-    return jsonify({"data": data})
+            x.append(row["x"])
+            y.append(row["y"])
+            z.append(row["z"])
+    (fft_mag, mean, fft_sum) = fft.get_FFT(x, y, z)
+    print("Got FFT")
+    print(fft_sum)
+    fell = False
+    if(fft_sum > 2000):
+        fell = True
+    return jsonify({"data": data, "fell": fell})
 
 # Collect post information
 @app.route("/data", methods=["POST"])
 def post_data():
-    print("Receiving data")
     # Read in the collected user info
     xVal = []
     yVal = []
@@ -75,12 +86,17 @@ def post_data():
     #print(timestamps)
 
     return "OK", 200
-        
+
+@app.route("/test")
+def test():
+    return render_template('graph.html')
+
+
 # Rending the data page
 @app.route("/graph", methods=["GET"])
 def get_data3():
     print("Routing data")
-    return render_template('graph.html')
+    return render_template('/bootstrap/index.html')
     #return render_template('multi-line-full.html')
 
 # Example D3 webpage

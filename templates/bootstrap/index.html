@@ -37,6 +37,19 @@
             text-align: center;
             display: none;
         }
+
+		
+
+		.x.axis line {
+    	  shape-rendering: auto;
+    	}
+	
+    	.line {
+    	  fill: none;
+    	  stroke: #000;
+    	  stroke-width: 1.5px;
+    	}
+
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -50,22 +63,23 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script>
 
-var n = 40,
+var n = 1000,
     random = d3.random.normal(0, 0);
 
-    var result;
-    var pos_x = 0;
-    var pos_y = 0;
-    var pos_z = 0;
+	var duration_speed = 85;
+	var result = [];
+	var pos_x = 0;
+	var pos_y = 0;
+	var pos_z = 0;
 
 function getData() {
-    $.get("/data", function(res, status) {
-        console.log(result);
-        result = res;
-    });
+	$.get("/data", function(res, status) {
+		result = res;
+	});
 }
+getData();
 
-window.setInterval(getData, 500);
+window.setInterval(getData, 2720);
 
 function chart(domain, interpolation, tick) {
 
@@ -77,7 +91,7 @@ function chart(domain, interpolation, tick) {
 
         //data = result.data;
         var margin = {top: 6, right: 0, bottom: 6, left: 40},
-        width = 960 - margin.right,
+        width = 635 - margin.right,
         height = 120 - margin.top - margin.bottom;
 
         var x = d3.scale.linear()
@@ -1002,17 +1016,17 @@ function chart(domain, interpolation, tick) {
     <script>(function() {
 
 var transition = d3.select({}).transition()
-    .duration(50)
+    .duration(duration_speed)
     .ease("linear");
 
 chart([0, n - 1], "linear", function tick_x(path, line, data, x) {
   transition = transition.each(function() {
 
-      // push a new data point onto the back
-    data.push(result.data[pos_x].x);
-    pos_x++;
-    if(pos_x > 31)
-        pos_x = 0;
+	  // push a new data point onto the back
+	data.push(result.data[pos_x].x);
+	pos_x++;
+	if(pos_x > 31)
+		pos_x = 0;
 
     // redraw the line, and then slide it to the left
     path
@@ -1035,18 +1049,18 @@ chart([0, n - 1], "linear", function tick_x(path, line, data, x) {
 <script>(function() {
 
 var transition_y = d3.select({}).transition()
-    .duration(50)
+    .duration(duration_speed)
     .ease("linear");
 
 chart([0, n - 1], "linear", function tick_y(path, line, data, x) {
 try {
   transition_y = transition_y.each(function() {
 
-      // push a new data point onto the back
-    data.push(result.data[pos_y].y);
-    pos_y++;
-    if(pos_y > 31)
-        pos_y = 0;
+	  // push a new data point onto the back
+	data.push(result.data[pos_y].y);
+	pos_y++;
+	if(pos_y > 31)
+		pos_y = 0;
 
     // redraw the line, and then slide it to the left
     path
@@ -1069,40 +1083,37 @@ catch(err) {
 
 
 <script>(function() {
+	getData();
+	var transition_z = d3.select({}).transition()
+	.duration(duration_speed)
+	.ease("linear");
 
-    var transition_z = d3.select({}).transition()
-    .duration(50)
-    .ease("linear");
+	chart([0, n - 1], "linear", function tick_z(path, line, data, x) {
+		transition_z = transition_z.each(function() {
 
-    chart([0, n - 1], "linear", function tick_z(path, line, data, x) {
-        transition_z = transition_z.each(function() {
+			// push a new data point onto the back
+			data.push(result.data[pos_z].z);
+			pos_z++;
+			if(pos_z > 31) {
+				pos_z = 0;
+			}
 
-            // push a new data point onto the back
-            if(result.data[pos_z].z != undefined) {
-                console.log("UNdefined");
-            }
-            else {  
-            data.push(result.data[pos_z].z);
-            pos_z++;
-            if(pos_z > 31) {
-                pos_z = 0;
-            }
+			// redraw the line, and then slide it to the left
+			path
+			.attr("d", line)
+			.attr("transform", null)
+			.transition()
+			.attr("transform", "translate(" + x(-1) + ")");
 
-            // redraw the line, and then slide it to the left
-            path
-            .attr("d", line)
-            .attr("transform", null)
-            .transition()
-            .attr("transform", "translate(" + x(-1) + ")");
+			// pop the old data point off the front
+			data.shift();
 
-            // pop the old data point off the front
-            data.shift();
-            }
-
-        }).transition().each("start", function() { tick_z(path, line, data, x); });
-    });
+		}).transition().each("start", function() { tick_z(path, line, data, x); });
+	});
 
 })();</script>
+</body>
+</html>
 
 </body>
 
