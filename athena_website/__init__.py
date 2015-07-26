@@ -3,6 +3,12 @@
 import flask
 import os
 
+import logging
+
+# Remove console
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
 # Set up the Flask application
 _base = os.path.join(os.path.dirname(__file__), os.path.pardir)
 app = flask.Flask("viewer",

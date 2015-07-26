@@ -19,22 +19,23 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script>
 
-var n = 40,
+var n = 1000,
     random = d3.random.normal(0, 0);
 
-	var result;
+	var duration_speed = 85;
+	var result = [];
 	var pos_x = 0;
 	var pos_y = 0;
 	var pos_z = 0;
 
 function getData() {
 	$.get("/data", function(res, status) {
-		console.log(result);
 		result = res;
 	});
 }
+getData();
 
-window.setInterval(getData, 500);
+window.setInterval(getData, 2720);
 
 function chart(domain, interpolation, tick) {
 
@@ -99,7 +100,7 @@ function chart(domain, interpolation, tick) {
 <script>(function() {
 
 var transition = d3.select({}).transition()
-    .duration(50)
+    .duration(duration_speed)
     .ease("linear");
 
 chart([0, n - 1], "linear", function tick_x(path, line, data, x) {
@@ -132,7 +133,7 @@ chart([0, n - 1], "linear", function tick_x(path, line, data, x) {
 <script>(function() {
 
 var transition_y = d3.select({}).transition()
-    .duration(50)
+    .duration(duration_speed)
     .ease("linear");
 
 chart([0, n - 1], "linear", function tick_y(path, line, data, x) {
@@ -166,19 +167,15 @@ catch(err) {
 
 
 <script>(function() {
-
+	getData();
 	var transition_z = d3.select({}).transition()
-	.duration(50)
+	.duration(duration_speed)
 	.ease("linear");
 
 	chart([0, n - 1], "linear", function tick_z(path, line, data, x) {
 		transition_z = transition_z.each(function() {
 
 			// push a new data point onto the back
-			if(result.data[pos_z].z != undefined) {
-				console.log("UNdefined");
-			}
-			else {	
 			data.push(result.data[pos_z].z);
 			pos_z++;
 			if(pos_z > 31) {
@@ -194,7 +191,6 @@ catch(err) {
 
 			// pop the old data point off the front
 			data.shift();
-			}
 
 		}).transition().each("start", function() { tick_z(path, line, data, x); });
 	});
