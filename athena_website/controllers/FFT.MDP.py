@@ -16,9 +16,8 @@ def main():
     dummyfftOut = func(processFFT(array[:,0])[0], processFFT(array[:,1])[0], processFFT(array[:,2])[0])  
     dummyMean = func(processFFT(array[:,0])[1], processFFT(array[:,1])[1], processFFT(array[:,2])[1])
     x = type (dummyfftOut)
-    for i in range (32):
-        if i >= 16 and i < 32:
-            sum2nd += dummyfftOut[i]
+    for i in range (16, 32):
+        sum2nd += dummyfftOut[i]
     print (dummyfftOut, dummyMean)
     print sum2nd
 
