@@ -86,12 +86,17 @@ def post_data():
     #print(timestamps)
 
     return "OK", 200
-        
+
+@app.route("/test")
+def test():
+    return render_template('graph.html')
+
+
 # Rending the data page
 @app.route("/graph", methods=["GET"])
 def get_data3():
     print("Routing data")
-    return render_template('graph.html')
+    return render_template('/bootstrap/index.html')
     #return render_template('multi-line-full.html')
 
 # Example D3 webpage
