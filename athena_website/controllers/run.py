@@ -32,8 +32,12 @@ def save_csv(timestamps):
         csv_file.write(str(timestamp[0]) + "," + str(timestamp[1]) + ","  + str(timestamp[2]) + "," + str(timestamp[3]) + '\n')
     return
 
+fell = False
+number = 0
 @app.route("/data", methods=["GET"])
 def get_data():
+    global number
+    global fell
     data = []
     x = []
     y = []
@@ -46,44 +50,44 @@ def get_data():
             x.append(row["x"])
             y.append(row["y"])
             z.append(row["z"])
-    (fft_mag, mean, fft_sum) = fft.get_FFT(x, y, z)
-    print("Got FFT")
-    print(fft_sum)
+        return jsonify({"data": data, "fell": fell, "number": number})
+
+@app.route("/reset", methods=["POST"])
+def post_reset():
+    global fell
     fell = False
-    if(fft_sum > 2000):
-        fell = True
-    return jsonify({"data": data, "fell": fell})
+    return "OK", 200
+
 
 # Collect post information
 @app.route("/data", methods=["POST"])
 def post_data():
+    global fell
+    global number
     # Read in the collected user info
-    xVal = []
-    yVal = []
-    zVal = []
+    x = []
+    y = []
+    z = []
     timestamps = []
     username = None
     for data in request.json:
         if username is None:
             username = data["email"]
         timestamps.append((data["timestamp"], data["xVal"], data["yVal"], data["zVal"]))
-        #timestamps.append(data["timestamp"])
-        #xVal.append(data["xVal"])
-        #yVal.append(data["yVal"])
-        #zVal.append(data["zVal"])
+        x.append(data["xVal"])
+        y.append(data["yVal"])
+        z.append(data["zVal"])
 
-    # Grab the user and update the values
-    #user = mod_users.get(username, noerror=True)
-    #if user is None:
-    #    user = mod_users.create(username)
-    #user.xVal = xVal
-    #user.yVal = yVal
-    #user.xVal = zVal
+    print("Checking FFT")
+    (fft_mag, mean, fft_sum) = fft.get_FFT(x, y, z)
+    print("Got FFT")
+    print(fft_sum)
+    if(fft_sum > 1600):
+        fell = True
+        number += 1
 
     # Save the data to an CSV
     save_csv(timestamps)
-    #print("Wrote data")
-    #print(timestamps)
 
     return "OK", 200
 
